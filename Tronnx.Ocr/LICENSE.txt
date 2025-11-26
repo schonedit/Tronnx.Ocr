@@ -1,0 +1,10 @@
+The ONNX models included in this package are licensed under the Apache 2.0 License.
+
+• linknet_resnet18.onnx – Apache License 2.0
+• crnn_vgg16_bn_dynW.onnx – Apache License 2.0
+
+Dependencies bundled through NuGet:
+• Microsoft.ML.OnnxRuntime – MIT License
+• OpenCvSharp4 – MIT License
+• OpenCvSharp4.runtime.win – MIT License
+• SixLabors.ImageSharp – Apache 2.0 License

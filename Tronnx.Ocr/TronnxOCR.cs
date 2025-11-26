@@ -1,5 +1,6 @@
 ﻿using OpenCvSharp;
 using System.Text;
+using Tronnx.Ocr.Types;
 
 namespace Tronnx.Ocr
 {
@@ -50,6 +51,56 @@ namespace Tronnx.Ocr
 
             var img = PreProcessImage(imagePath);
             return ProcessImage(img);
+        }
+
+        /// <summary>
+        /// Creates a searchable PDF document from a collection of image files by performing OCR on each image.
+        /// </summary>
+        /// <remarks>The resulting PDF will contain text that can be searched and selected, extracted from
+        /// the images using optical character recognition (OCR). All images are processed in the order provided. Ensure
+        /// that the specified output path is writable and that all image files are accessible.</remarks>
+        /// <param name="imagePaths">A collection of file paths to the images to be processed and included in the PDF. Each path must refer to a
+        /// valid image file.</param>
+        /// <param name="outputPdfPath">The file path where the generated searchable PDF will be saved. If a file already exists at this path, it
+        /// may be overwritten.</param>
+        public void ToSearchablePdf(IEnumerable<string> imagePaths, string outputPdfPath)
+        {
+            var pageResults = new List<PageResult>();
+
+            foreach (var imagePath in imagePaths)
+            {
+                var img = PreProcessImage(imagePath);
+                var pr = SearchablePdf.ProcessPageToResult(detector, recognizer, img, imagePath);
+                pageResults.Add(pr);
+            }
+
+            SearchablePdf.GenerateSearchablePdf(outputPdfPath, pageResults);
+        }
+
+        /// <summary>
+        /// Creates a searchable PDF from the specified image files and returns the extracted text content.
+        /// </summary>
+        /// <remarks>The method processes each image to extract text and embeds both the image and its recognized text
+        /// into the resulting PDF, enabling text search functionality. Ensure that the output path is writable and that all
+        /// input image paths are valid and accessible.</remarks>
+        /// <param name="imagePaths">A collection of file paths to the images to be processed and included in the PDF. Each image should be accessible
+        /// and in a supported format.</param>
+        /// <param name="outputPdfPath">The file path where the generated searchable PDF will be saved. If a file already exists at this path, it may be
+        /// overwritten.</param>
+        /// <returns>A string containing the combined text extracted from all processed images. The returned text represents the
+        /// searchable content embedded in the PDF.</returns>
+        public string GetTextAndPdf(IEnumerable<string> imagePaths, string outputPdfPath)
+        {
+            var pageResults = new List<PageResult>();
+
+            foreach (var imagePath in imagePaths)
+            {
+                var img = PreProcessImage(imagePath);
+                var pr = SearchablePdf.ProcessPageToResult(detector, recognizer, img, imagePath);
+                pageResults.Add(pr);
+            }
+
+            return SearchablePdf.GenerateSearchablePdf(outputPdfPath, pageResults);
         }
 
         /// <summary>

@@ -389,6 +389,66 @@ namespace Tronnx.Ocr
             return CtcGreedyDecode(logits, vocab, blank);
         }
 
+        /// <summary>
+        /// Recognizes text for each rotated rectangle (box) on the provided page image.
+        /// The method returns a list with one element per input box:
+        /// - null for sentinel boxes (center X/Y < 0),
+        /// - empty string if the crop was empty,
+        /// - otherwise the recognized text for that box.
+        /// </summary>
+        /// <param name="pageBgr">Source page image in BGR color space (OpenCvSharp <see cref="Mat"/>).</param>
+        /// <param name="boxes">List of rotated rectangles specifying regions to recognize.</param>
+        /// <param name="saved">Unused debug counter (reserved for debug saving of crops).</param>
+        /// <param name="targetH">Target height (pixels) used when resizing word crops for the recognizer.</param>
+        /// <returns>
+        /// A list of recognized strings (one element per input box). Elements may be null, empty, or a non-empty string.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="pageBgr"/> or <paramref name="boxes"/> is null.</exception>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="pageBgr"/> is empty.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when internal preprocessing or model inference fails; the inner exception is preserved.</exception>
+        internal List<string?> RecognizePerBox(Mat pageBgr, List<RotatedRect> boxes, int saved = 0, int targetH = 32)
+        {
+            if (pageBgr is null) throw new ArgumentNullException(nameof(pageBgr));
+            if (boxes is null) throw new ArgumentNullException(nameof(boxes));
+            if (pageBgr.Empty()) throw new ArgumentException("Input image is empty.", nameof(pageBgr));
+
+            var results = new List<string?>(boxes.Count);
+            if (boxes.Count == 0)
+                return results;
+
+            try
+            {
+                for (int i = 0; i < boxes.Count; i++)
+                {
+                    var rr = boxes[i];
+
+                    if (rr.Center.X < 0 && rr.Center.Y < 0)
+                    {
+                        results.Add(null);
+                        continue;
+                    }
+
+                    using var crop0 = CropAabb(pageBgr, rr, padXRatio: 0.05f, padYRatio: 0.30f);
+                    if (crop0.Empty())
+                    {
+                        results.Add(string.Empty);
+                        continue;
+                    }
+
+                    using var crop = TrimWhitespace(crop0, padXRatio: 0.15f, padYRatio: 0.25f);
+                    var ten = PreprocessWordDynamic(crop, targetH: targetH, maxW: 512);
+                    var text = RunRecognizerCtcSingle(_session, _vocab, _blankIndex, ten);
+                    results.Add(text);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("RecognizePerBox failed during preprocessing or inference.", ex);
+            }
+
+            return results;
+        }
+
         public void Dispose() => _session.Dispose();
     }
 }
