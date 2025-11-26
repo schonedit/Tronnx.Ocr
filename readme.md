@@ -1,4 +1,4 @@
-# Tronnx.Ocr – Offline OCR Engine for .NET
+# Tronnx.Ocr – Fully Offline OCR Engine for .NET
 
 Tronnx.Ocr is a fully offline OCR library for .NET.  
 It performs text detection and text recognition using ONNX Runtime and OpenCV, powered by two Apache 2.0 licensed ONNX models.  
@@ -53,9 +53,15 @@ dotnet add package Tronnx.Ocr
 using Tronnx.Ocr;
 
 var ocr = new TronnxOCR();
+
+// 1) Extract text
 string text = ocr.GetText("image.png");
 
-Console.WriteLine(text);
+// 2) Generate searchable PDF
+ocr.ToSearchablePdf(new[] { "image1.png", "image2.png" }, "output.pdf");
+
+// 3) Extract text + generate PDF in one call
+string text = ocr.GetTextAndPdf(new[] { "image.png" }, "output.pdf");
 ```
 
 ---
@@ -106,7 +112,8 @@ This project uses the following open-source libraries:
 - Microsoft.ML.OnnxRuntime – MIT License  
 - OpenCvSharp4 – MIT License  
 - OpenCvSharp4.runtime.win – MIT License  
-- SixLabors.ImageSharp – Apache 2.0 License  
+- PdfSharpCore (MIT License)
+- SkiaSharp (MIT License)
 
 Bundled ONNX models are licensed under Apache License 2.0.
 
