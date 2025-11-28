@@ -62,6 +62,9 @@ ocr.ToSearchablePdf(new[] { "image1.png", "image2.png" }, "output.pdf");
 
 // 3) Extract text + generate PDF in one call
 string text = ocr.GetTextAndPdf(new[] { "image.png" }, "output.pdf");
+
+// 4) Generate highlighted, searchable PDF
+ocr.GetHighlightedPdf(new[] { "image.png" }, new[] { "support", "2025" }, "output.pdf");
 ```
 
 ---
