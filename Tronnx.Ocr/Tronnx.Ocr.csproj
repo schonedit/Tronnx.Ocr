@@ -9,7 +9,7 @@
 		<Authors>Edit Schönperger</Authors>
 		<Company>Edit Schönperger</Company>
 		<PackageId>Tronnx.Ocr</PackageId>
-		<Version>1.1.0</Version>
+		<Version>1.2.0</Version>
 		<PackageIcon>tronnx_128.png</PackageIcon>
 		<Description>
 			<![CDATA[
@@ -30,6 +30,7 @@ Key features:
 • Automatic model caching for repeated runs
 • Embedded ONNX models, no downloads required
 • Generate fully searchable PDFs from images
+• Highlight specific words in output PDFs
 
 Dependencies:
 • Microsoft.ML.OnnxRuntime (MIT License)
@@ -46,6 +47,12 @@ Suggestions, ideas, and contributions are welcome on the GitHub repository.
 ]]>
 		</Description>
 		<RepositoryUrl>https://github.com/schonedit/Tronnx.Ocr</RepositoryUrl>
+		<PackageTags>
+			ocr;onnx;onnxruntime;text-recognition;text-detection;pdf;searchable-pdf;
+			pdf-highlight;pdf-generation;opencv;skia;offline-ocr;image-to-pdf;ocr-net8;
+			document-processing
+		</PackageTags>
+		<PackageSummary>Offline OCR engine (ONNX Runtime) with searchable PDF generation and automatic text highlighting.</PackageSummary>
 	</PropertyGroup>
 
 	<ItemGroup>

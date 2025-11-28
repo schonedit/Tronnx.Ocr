@@ -104,6 +104,30 @@ namespace Tronnx.Ocr
         }
 
         /// <summary>
+        /// Creates a searchable and highlighted PDF from one or more input images. Each image is processed with OCR to detect 
+        /// text regions.
+        /// </summary>
+        /// <param name="imagePaths">The collection of image file paths to convert into a single searchable PDF.
+        /// Each image will become one page in the final document.</param>
+        /// <param name="targets">A list of words or phrases to highlight. Any recognized text box containing
+        /// a target will be highlighted in the output PDF. Matching is case-insensitive.</param>
+        /// <param name="outputPdfPath">The file path where the generated PDF will be saved. Existing files will be overwritten.</param>
+        /// <returns></returns>
+        public string GetHighlightedPdf(IEnumerable<string> imagePaths, IEnumerable<string> targets, string outputPdfPath)
+        {
+            var pageResults = new List<PageResult>();
+
+            foreach (var imagePath in imagePaths)
+            {
+                var img = PreProcessImage(imagePath);
+                var pr = SearchablePdf.ProcessPageToResult(detector, recognizer, img, imagePath);
+                pageResults.Add(pr);
+            }
+
+            return SearchablePdf.HighlightPdf(outputPdfPath, pageResults, targets);
+        }
+
+        /// <summary>
         /// Loads and preprocesses an image from the specified file path.
         /// </summary>
         /// <param name="imagePath">The path to the image file to be loaded. The file must exist and be in a supported format.</param>

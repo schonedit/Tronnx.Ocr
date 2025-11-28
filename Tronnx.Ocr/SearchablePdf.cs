@@ -210,5 +210,97 @@ namespace Tronnx.Ocr
                 throw new InvalidOperationException($"Failed to process page '{imagePath}'. See inner exception for details.", ex);
             }
         }
+
+        /// <summary>
+        /// Generates a searchable PDF document from OCR-processed page resultOptionally highlights specified target words by drawing 
+        /// a semi-transparent rectangle behind matching text boxes.
+        /// </summary>
+        /// <param name="outputPath">The full file path where the generated PDF will be saved. Existing files will be overwritten.</param>
+        /// <param name="pages">The collection of <see cref="PageResult"/> objects containing the page images and their recognized 
+        /// text boxes with coordinates.</param>
+        /// <param name="targets">A list of words or phrases to highlight. Matching text boxes will be visually emphasized in the final PDF.</param>
+        /// <returns>The concatenated recognized text from all pages.</returns>
+        /// <exception cref="ArgumentException"></exception>
+        internal static string HighlightPdf(string outputPath, List<PageResult> pages, IEnumerable<string> targets)
+        {
+            if (string.IsNullOrEmpty(outputPath))
+                throw new ArgumentException("Output path cannot be null or empty.", nameof(outputPath));
+            if (pages is null)
+                throw new ArgumentException(nameof(pages));
+            if (targets is null)
+                throw new ArgumentException(nameof(targets));
+
+            using var document = new PdfDocument();
+            var tempFiles = new List<string>();
+            string text = "";
+            var highlightBrush = new XSolidBrush(XColor.FromArgb(100, 255, 255, 0));
+            try
+            {
+                foreach (var pageResult in pages)
+                {
+                    var page = document.AddPage();
+                    page.Width = pageResult.ImageWidth;
+                    page.Height = pageResult.ImageHeight;
+
+                    using var gfx = XGraphics.FromPdfPage(page);
+                    var compressedPath = RecompressJpeg(pageResult.ImagePath, 70);
+                    tempFiles.Add(compressedPath);
+
+                    using var img = XImage.FromFile(compressedPath);
+                    gfx.DrawImage(img, 0, 0, page.Width, page.Height);
+
+                    foreach (var box in pageResult.Boxes)
+                    {
+                        if (string.IsNullOrWhiteSpace(box.Text))
+                            continue;
+
+                        double x = box.X;
+                        double y = box.Y;
+                        double w = box.Width;
+                        double h = box.Height;
+
+                        if (w <= 0 || h <= 0)
+                            continue;
+
+                        double baseFontSize = h * 0.7;
+
+                        if (baseFontSize < 4)
+                            baseFontSize = 4;
+
+                        var font = new XFont("Arial", baseFontSize, XFontStyle.Regular);
+                        var transparentBrush = new XSolidBrush(XColor.FromArgb(0, 0, 0, 0));
+
+                        XSize natural = gfx.MeasureString(box.Text, font);
+                        if (natural.Width <= 0)
+                            continue;
+
+                        const double Fudge = 1.05;
+                        double scaleX = (w * Fudge) / natural.Width;
+
+                        if (targets.Any(x => x.Contains(box.Text, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            gfx.DrawRectangle(highlightBrush, x, y, w, h);
+                        }
+
+                        text += box.Text + " ";
+                        gfx.Save();
+                        gfx.TranslateTransform(x, y);
+                        gfx.ScaleTransform(scaleX, 1.0);
+                        gfx.DrawLine(XPens.Red, 0, 0, 0, 0);
+                        gfx.DrawString(box.Text + " ", font, transparentBrush, new XPoint(0, 0), XStringFormats.TopLeft);
+                        gfx.Restore();
+                    }
+                }
+                document.Save(outputPath);
+                return text;
+            }
+            finally
+            {
+                foreach (var f in tempFiles)
+                {
+                    try { if (File.Exists(f)) File.Delete(f); } catch { /* ignore cleanup errors */ }
+                }
+            }
+        }
     }
 }
