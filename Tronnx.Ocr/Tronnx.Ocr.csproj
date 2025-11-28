@@ -70,6 +70,7 @@ Suggestions, ideas, and contributions are welcome on the GitHub repository.
 		<EmbeddedResource Include="Models\linknet_resnet18.onnx.onnx.data" />
 		<EmbeddedResource Include="Models\vocab_crnn.txt" />
 		<EmbeddedResource Include="Models\blank_crnn.txt" />
+		<None Include="README.md" Pack="true" PackagePath="\"/>
 		<None Include="LICENSE.txt" Pack="true" PackagePath="\" />
 		<None Include="tronnx_128.png" Pack="true" PackagePath="" />
 	</ItemGroup>
