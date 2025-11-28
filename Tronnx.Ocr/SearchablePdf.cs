@@ -277,7 +277,7 @@ namespace Tronnx.Ocr
                         const double Fudge = 1.05;
                         double scaleX = (w * Fudge) / natural.Width;
 
-                        if (targets.Any(x => x.Contains(box.Text, StringComparison.OrdinalIgnoreCase)))
+                        if (targets.Any(x => x.ToLower() == box.Text.ToLower()))
                         {
                             gfx.DrawRectangle(highlightBrush, x, y, w, h);
                         }
