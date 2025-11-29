@@ -7,4 +7,5 @@ Dependencies bundled through NuGet:
 • Microsoft.ML.OnnxRuntime – MIT License
 • OpenCvSharp4 – MIT License
 • OpenCvSharp4.runtime.win – MIT License
-• SixLabors.ImageSharp – Apache 2.0 License
+• PdfSharpCore (MIT License)
+• SkiaSharp (MIT License)
