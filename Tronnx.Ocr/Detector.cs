@@ -63,10 +63,11 @@ namespace Tronnx.Ocr
         }
 
         /// <summary>
-        /// 
+        /// Runs the detection using the ONNX runtime session. It feeds the input tensor into the model and returns 
+        /// the inference output as a float tensor.
         /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
+        /// <param name="input">The input tensor for the model.</param>
+        /// <returns>The output tensor produced by the detector.</returns>
         internal Tensor<float> RunDetector(DenseTensor<float> input)
         {
             var inpName = _session.InputMetadata.Keys.First();
@@ -120,7 +121,7 @@ namespace Tronnx.Ocr
                     for (int x = 0; x < W; x++)
                         map[y * W + x] = logits[0, y, x];
             }
-            else throw new InvalidOperationException($"Váratlan detektor kimenet: [{string.Join(",", logits.Dimensions.ToArray())}]");
+            else throw new InvalidOperationException($"Unexpected detector output: [{string.Join(",", logits.Dimensions.ToArray())}]");
 
             float min = map.Min(), max = map.Max();
             if (min < 0f || max > 1f)
@@ -140,28 +141,6 @@ namespace Tronnx.Ocr
             Cv2.Threshold(prob8, prob8, probThresh * 255.0, 255, ThresholdTypes.Binary);
             using var kernel = Cv2.GetStructuringElement(MorphShapes.Rect, new Size(3, 3));
             Cv2.MorphologyEx(prob8, prob8, MorphTypes.Dilate, kernel, iterations: 2);
-
-            //using (var normFloat = new Mat())
-            //{
-            //    Cv2.Normalize(prob, normFloat, 0, 1, NormTypes.MinMax);
-            //    Cv2.ImWrite(Path.Combine(DEBUG_DIR, "heatmap_gray.png"), normFloat * 255);
-            //}
-
-            //using (var sw = new StreamWriter(Path.Combine(DEBUG_DIR, "heatmap_values.csv")))
-            //{
-            //    int stepY = Math.Max(1, prob.Rows / 100);
-            //    int stepX = Math.Max(1, prob.Cols / 100);
-            //    for (int y = 0; y < prob.Rows; y += stepY)
-            //    {
-            //        for (int x = 0; x < prob.Cols; x += stepX)
-            //        {
-            //            float val = pidx[y, x];
-            //            sw.Write(val.ToString("F3") + ";");
-            //        }
-            //        sw.WriteLine();
-            //    }
-            //}
-            //Cv2.ImWrite("detector_mask_debug.png", prob8);
 
             Cv2.FindContours(prob8, out Point[][] contours, out HierarchyIndex[] hierarchy, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
 
@@ -220,12 +199,6 @@ namespace Tronnx.Ocr
                 var topRight = pts.OrderBy(p => p.X).ThenByDescending(p => p.Y).First();
                 var bottomLeft = pts.OrderByDescending(p => p.X).ThenBy(p => p.Y).First();
                 var bottomRight = pts.OrderByDescending(p => p.Y).ThenByDescending(p => p.X).First();
-
-                // topleft.....xx......topRight
-                // |                     |
-                // Y                     Y
-                // |                     |
-                // bottomLeft....xx....bottomRight
 
                 var boxPoint = new BoxPoint()
                 {
@@ -305,7 +278,6 @@ namespace Tronnx.Ocr
             }
             return medianHeight * ratio;
         }
-
 
         /// <summary>
         /// Saves an image with overlayed rectangles to the specified file path.

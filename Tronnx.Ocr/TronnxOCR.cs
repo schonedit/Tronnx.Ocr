@@ -216,10 +216,8 @@ namespace Tronnx.Ocr
         {
             string baseName = Path.GetFileName(modelFile);
             string sideName = baseName + ".onnx.data";
-            // Cache or reuse the primary ONNX model file
             string modelPath = ExtractCached(baseName);
 
-            // Try caching the sidecar file — ignore if missing
             try
             {
                 ExtractCached(sideName);
@@ -250,7 +248,6 @@ namespace Tronnx.Ocr
 
             string target = Path.Combine(cacheDir, fileName);
 
-            // If already cached, no need to copy again
             if (!File.Exists(target))
             {
                 ExtractResourceToSpecificPath(fileName, target);

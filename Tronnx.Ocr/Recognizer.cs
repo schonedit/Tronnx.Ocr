@@ -8,7 +8,6 @@ namespace Tronnx.Ocr
 {
     internal class Recognizer : IDisposable
     {
-        // ViTSTR norm (doctr recognizer)
         static readonly float[] MEAN = { 0.694f, 0.695f, 0.693f };
         static readonly float[] STD = { 0.299f, 0.296f, 0.301f };
 
@@ -54,14 +53,6 @@ namespace Tronnx.Ocr
                 var rr = boxes[i];
                 string blankPath = "blank_crnn.txt";
                 using var crop0 = CropAabb(pageBgr, rr, padXRatio: 0.05f, padYRatio: 0.30f);
-
-                //debug
-                //if (DEBUG_SAVE_CROPS && saved < DEBUG_MAX_CROPS)
-                //{
-                //    var path = System.IO.Path.Combine(DEBUG_DIR, $"crop_{i:0000}.png");
-                //    Cv2.ImWrite(path, crop0);
-                //    saved++;
-                //}
 
                 if (rr.Center.X < 0 && rr.Center.Y < 0)
                 {
@@ -214,97 +205,6 @@ namespace Tronnx.Ocr
 
                 lastCharIndex = bestClassIndex;
             }
-            return decoded.ToString();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="logits"></param>
-        /// <param name="vocab"></param>
-        /// <param name="blankIndex"></param>
-        /// <param name="debugSteps"></param>
-        /// <returns></returns>
-        private string CtcGreedyDecode_DebugList(Tensor<float> logits, string vocab, int blankIndex, out List<CtcStepInfo> debugSteps)
-        {
-            var dims = logits.Dimensions;
-            bool isTimeMajor = dims[1] <= dims[2];
-            int T = isTimeMajor ? dims[1] : dims[2];
-            int C = isTimeMajor ? dims[2] : dims[1];
-
-            debugSteps = new List<CtcStepInfo>(T);
-            var decoded = new StringBuilder(T);
-            int lastChar = -1;
-
-            for (int t = 0; t < T; t++)
-            {
-                float[] logitsT = new float[C];
-                float maxLogit = float.NegativeInfinity;
-                for (int c = 0; c < C; c++)
-                {
-                    float v = isTimeMajor ? logits[0, t, c] : logits[0, c, t];
-                    logitsT[c] = v;
-                    if (v > maxLogit) maxLogit = v;
-                }
-
-                float sumExp = 0;
-                float[] probs = new float[C];
-                for (int c = 0; c < C; c++)
-                {
-                    probs[c] = MathF.Exp(logitsT[c] - maxLogit);
-                    sumExp += probs[c];
-                }
-                for (int c = 0; c < C; c++)
-                    probs[c] /= sumExp;
-
-                int bestClass = 0, secondClass = 0;
-                float bestProb = 0, secondProb = 0;
-                for (int c = 0; c < C; c++)
-                {
-                    float p = probs[c];
-                    if (p > bestProb)
-                    {
-                        secondProb = bestProb;
-                        secondClass = bestClass;
-                        bestProb = p;
-                        bestClass = c;
-                    }
-                    else if (p > secondProb)
-                    {
-                        secondProb = p;
-                        secondClass = c;
-                    }
-                }
-
-                bool isBlank = bestClass == blankIndex;
-                char? ch = !isBlank && bestClass < vocab.Length ? vocab[bestClass] : null;
-
-                float entropy = 0;
-                for (int c = 0; c < C; c++)
-                    if (probs[c] > 0)
-                        entropy -= probs[c] * MathF.Log(probs[c]);
-
-                debugSteps.Add(new CtcStepInfo
-                {
-                    Step = t,
-                    BestClass = bestClass,
-                    BestLogit = logitsT[bestClass],
-                    SecondBestLogit = logitsT[secondClass],
-                    MaxProb = bestProb,
-                    Entropy = entropy,
-                    IsBlank = isBlank,
-                    Character = ch
-                });
-
-                if (!isBlank && bestClass == lastChar)
-                    continue;
-
-                if (ch.HasValue)
-                    decoded.Append(ch);
-
-                lastChar = bestClass;
-            }
-
             return decoded.ToString();
         }
 
