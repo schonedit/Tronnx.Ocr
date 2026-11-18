@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Tronnx.Ocr.Core</PackageId>
+    <RootNamespace>Tronnx.Ocr</RootNamespace>
+    <Description>Tronnx.Ocr core pipeline (detection + recognition) without bundled models or native ONNX Runtime. Most users should reference the Tronnx.Ocr package instead.</Description>
+    <PackageTags>ocr;onnx;onnxruntime;offline-ocr;text-recognition;paddleocr</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Csak a menedzselt ONNX Runtime API: a natív futtatókörnyezetet (CPU / GPU) a felhasználó
+         vagy a Tronnx.Ocr metacsomag választja ki. Így a GPU-csomag később nem ütközik a CPU-val. -->
+    <PackageReference Include="Microsoft.ML.OnnxRuntime.Managed" Version="1.23.2" />
+    <PackageReference Include="SkiaSharp" Version="3.119.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Tronnx.Ocr.Tests" />
+  </ItemGroup>
+
+</Project>
