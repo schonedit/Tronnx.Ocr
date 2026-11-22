@@ -1,0 +1,56 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{AD6BC12A-4938-4A7F-8E82-9F2D3F2146D8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{8B67E628-174E-4D8D-AFE2-AC6CC6B107BF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{B67DC627-AC67-48AD-9F94-A2236B0D0476}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tronnx.Ocr.Core", "src\Tronnx.Ocr.Core\Tronnx.Ocr.Core.csproj", "{ECEFA31F-84D0-4255-89CE-9DE1A9EB1009}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tronnx.Ocr.Models.Latin", "src\Tronnx.Ocr.Models.Latin\Tronnx.Ocr.Models.Latin.csproj", "{8D54461A-7425-429F-B37F-0F141514C3F5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tronnx.Ocr", "src\Tronnx.Ocr\Tronnx.Ocr.csproj", "{AEDD7B14-772E-4656-9A7F-43886F62D872}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tronnx.Ocr.Cli", "samples\Tronnx.Ocr.Cli\Tronnx.Ocr.Cli.csproj", "{C4D78D7C-2586-4333-AD87-D8481BB2FA54}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tronnx.Ocr.Tests", "tests\Tronnx.Ocr.Tests\Tronnx.Ocr.Tests.csproj", "{E594ABBB-C8B3-45B4-964F-38CFBE0345CB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ECEFA31F-84D0-4255-89CE-9DE1A9EB1009}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECEFA31F-84D0-4255-89CE-9DE1A9EB1009}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECEFA31F-84D0-4255-89CE-9DE1A9EB1009}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECEFA31F-84D0-4255-89CE-9DE1A9EB1009}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D54461A-7425-429F-B37F-0F141514C3F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D54461A-7425-429F-B37F-0F141514C3F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D54461A-7425-429F-B37F-0F141514C3F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D54461A-7425-429F-B37F-0F141514C3F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEDD7B14-772E-4656-9A7F-43886F62D872}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEDD7B14-772E-4656-9A7F-43886F62D872}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEDD7B14-772E-4656-9A7F-43886F62D872}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEDD7B14-772E-4656-9A7F-43886F62D872}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4D78D7C-2586-4333-AD87-D8481BB2FA54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4D78D7C-2586-4333-AD87-D8481BB2FA54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4D78D7C-2586-4333-AD87-D8481BB2FA54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4D78D7C-2586-4333-AD87-D8481BB2FA54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E594ABBB-C8B3-45B4-964F-38CFBE0345CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E594ABBB-C8B3-45B4-964F-38CFBE0345CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E594ABBB-C8B3-45B4-964F-38CFBE0345CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E594ABBB-C8B3-45B4-964F-38CFBE0345CB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{ECEFA31F-84D0-4255-89CE-9DE1A9EB1009} = {AD6BC12A-4938-4A7F-8E82-9F2D3F2146D8}
+		{8D54461A-7425-429F-B37F-0F141514C3F5} = {AD6BC12A-4938-4A7F-8E82-9F2D3F2146D8}
+		{AEDD7B14-772E-4656-9A7F-43886F62D872} = {AD6BC12A-4938-4A7F-8E82-9F2D3F2146D8}
+		{C4D78D7C-2586-4333-AD87-D8481BB2FA54} = {8B67E628-174E-4D8D-AFE2-AC6CC6B107BF}
+		{E594ABBB-C8B3-45B4-964F-38CFBE0345CB} = {B67DC627-AC67-48AD-9F94-A2236B0D0476}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Tronnx.Ocr.Models.Latin</PackageId>
+    <RootNamespace>Tronnx.Ocr.Models</RootNamespace>
+    <Description>PP-OCRv5 mobile detection + Latin-script recognition models (32 languages incl. English, German, French, Hungarian, Polish, Czech) for Tronnx.Ocr. Models: Apache 2.0, © PaddlePaddle Authors.</Description>
+    <PackageTags>ocr;onnx;paddleocr;pp-ocrv5;latin;hungarian;magyar</PackageTags>
+  </PropertyGroup>
+
+  <!-- A modellfájlok nincsenek a gitben: tools/download-models.(ps1|sh) tölti le őket ide. -->
+  <ItemGroup>
+    <EmbeddedResource Include="models/pp-ocrv5_mobile_det.onnx" LogicalName="Tronnx.Models.Latin.det.onnx" />
+    <EmbeddedResource Include="models/latin_pp-ocrv5_mobile_rec.onnx" LogicalName="Tronnx.Models.Latin.rec.onnx" />
+    <EmbeddedResource Include="models/ppocrv5_latin_dict.txt" LogicalName="Tronnx.Models.Latin.dict.txt" />
+  </ItemGroup>
+
+  <Target Name="CheckModelsPresent" BeforeTargets="BeforeBuild">
+    <Error Condition="!Exists('models/pp-ocrv5_mobile_det.onnx') Or !Exists('models/latin_pp-ocrv5_mobile_rec.onnx') Or !Exists('models/ppocrv5_latin_dict.txt')"
+           Text="Model files missing. Run tools/download-models.ps1 (Windows) or tools/download-models.sh (Linux/macOS) from the repository root first." />
+  </Target>
+
+  <ItemGroup>
+    <ProjectReference Include="../Tronnx.Ocr.Core/Tronnx.Ocr.Core.csproj" />
+  </ItemGroup>
+
+</Project>

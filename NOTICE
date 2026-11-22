@@ -1,0 +1,21 @@
+Tronnx.Ocr
+Copyright 2025-2026 Edit Schönperger
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+This product includes ONNX conversions of the following models from PaddleOCR
+(https://github.com/PaddlePaddle/PaddleOCR), Copyright (c) PaddlePaddle Authors,
+licensed under the Apache License, Version 2.0:
+
+  - PP-OCRv5_mobile_det        (text detection)
+  - latin_PP-OCRv5_mobile_rec  (Latin-script text recognition)
+  - ppocrv5_latin_dict.txt     (recognition character dictionary)
+
+The models were converted from PaddlePaddle format to ONNX; the weights are unmodified.
+
+Third-party libraries (referenced as NuGet dependencies, not redistributed in source):
+  - Microsoft.ML.OnnxRuntime — MIT License, Copyright (c) Microsoft Corporation
+  - SkiaSharp — MIT License, Copyright (c) Microsoft Corporation / .NET Foundation
+
+"Tronnx" is a name used by Edit Schönperger to identify the official packages of this
+project. The Apache License does not grant permission to use this name (Section 6).

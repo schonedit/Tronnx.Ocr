@@ -1,0 +1,46 @@
+name: build
+
+on:
+  push:
+    branches: [main, v2]
+  pull_request:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Cache models
+        uses: actions/cache@v4
+        with:
+          path: src/Tronnx.Ocr.Models.Latin/models
+          key: models-${{ hashFiles('tools/download-models.sh') }}
+
+      - name: Download models
+        shell: bash
+        run: bash tools/download-models.sh
+
+      - run: dotnet build -c Release
+      - run: dotnet test -c Release --no-build --logger "console;verbosity=normal"
+
+      - name: Benchmark (sample image)
+        run: dotnet run -c Release --no-build --project samples/Tronnx.Ocr.Cli -- tests/Tronnx.Ocr.Tests/assets/hu_test.png --bench 10
+
+      - name: Pack
+        if: matrix.os == 'ubuntu-latest'
+        run: dotnet pack -c Release --no-build -o artifacts
+
+      - uses: actions/upload-artifact@v4
+        if: matrix.os == 'ubuntu-latest'
+        with:
+          name: nupkg
+          path: artifacts/*.nupkg

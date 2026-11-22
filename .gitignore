@@ -1,0 +1,13 @@
+bin/
+obj/
+.vs/
+.idea/
+*.user
+*.suo
+TestResults/
+artifacts/
+*.nupkg
+*.snupkg
+
+# A modellek letöltéssel kerülnek ide (tools/download-models.*), nem a gitbe.
+src/Tronnx.Ocr.Models.Latin/models/
